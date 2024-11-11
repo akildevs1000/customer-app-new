@@ -1,0 +1,79 @@
+/* Basic reset and container styling */
+.hotel-info {
+  font-family: Arial, sans-serif;
+  margin: auto;
+  text-align: center;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 0 20px;
+  line-height: 14pt;
+  color: #828282;
+}
+
+/* Header styling */
+.hotel-header {
+  padding: 10px;
+  color: #555;
+}
+
+.date-time p {
+  margin: 0;
+  font-size: 0.8em;
+}
+
+.hotel-title {
+  font-size: 1.5em;
+  margin: 5px 0;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.hotel-subtitle {
+  font-size: 13px;
+  color: #aaaaaa;
+}
+
+/* Image styling */
+.hotel-logo {
+  width: 100px;
+  height: 20px;
+  margin: 0 auto;
+}
+
+/* Image styling */
+.hotel-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Hotel Details styling */
+.hotel-details {
+  padding: 15px;
+}
+
+.hotel-details h2 {
+  margin-top: 10px;
+  font-size: 23px;
+}
+
+.contact-info {
+  text-align: left;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.contact-info p {
+  margin: 5px 0;
+}
+
+.contact-info svg {
+  margin-right: 8px;
+  color: rgb(57, 136, 255);
+}
+
+.description {
+  text-align: left;
+  margin-top: 25px;
+  font-size: 13px;
+}
