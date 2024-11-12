@@ -1,192 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
 import {
   Box,
-  Card,
   Avatar,
   IconButton,
   Typography,
   TextField,
-  Button,
-  CardMedia,
-  CardContent,
 } from "@mui/material";
 
 import { Close, Send } from "@mui/icons-material";
 
+import Voice from "./Voice";
+
 const ChatApp = () => {
-  const [messages] = useState([
-    {
-      sender_id: 1,
-      message: "Hey there!",
-      created_at: "10:00 AM",
-      voice_note: "",
-      chat_photos: [],
-    },
-    {
-      sender_id: 1,
-      message: "Hey there!",
-      created_at: "10:00 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 1,
-      message: "Hey there!",
-      created_at: "10:00 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-
-    {
-      sender_id: 2,
-      message: "Hello!",
-      created_at: "10:05 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 1,
-      message: "Hey there!",
-      created_at: "10:00 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 2,
-      message: "Hello!",
-      created_at: "10:05 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 1,
-      message: "Hey there!",
-      created_at: "10:00 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 2,
-      message: "Hello!",
-      created_at: "10:05 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 1,
-      message: "Hey there!",
-      created_at: "10:00 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 2,
-      message: "Hello!",
-      created_at: "10:05 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 1,
-      message: "Hey there!",
-      created_at: "10:00 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 2,
-      message: "Hello!",
-      created_at: "10:05 AM",
-      voice_note: "",
-      chat_photos: [
-      ],
-    },
-    {
-      sender_id: 1,
-      message: "Hey there!",
-      created_at: "10:00 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-    {
-      sender_id: 2,
-      message: "Hello!",
-      created_at: "10:05 AM",
-      voice_note: "",
-      chat_photos: [
-        {
-          photo_path:
-            "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-        },
-      ],
-    },
-  ]);
+  const messagesEndRef = useRef(null); // Reference for scrolling to the bottom
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [previewImages, setPreviewImages] = useState([
-    "https://via.placeholder.com/50",
-  ]);
+  const [previewImages, setPreviewImages] = useState([]);
 
-  const handleSendMessage = () => {
+  useEffect(() => {
+    // Scroll to the bottom whenever the messages array changes
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]); // Runs every time `messages` changes
+
+  useEffect(() => {
+    fetch(
+      "https://backend.myhotel2cloud.com/api/chat?sender_id=7&receiver_id=4&company_id=3"
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setMessages(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching chat data", error);
+      });
+  }, []);
+
+  const fetchLatestMessages = () => {
+    fetch(
+      "https://backend.myhotel2cloud.com/api/chat?sender_id=7&receiver_id=4&company_id=3"
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setMessages(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching chat data:", error);
+      });
+  };
+  const handleSendMessage = async () => {
     if (newMessage.trim() !== "") {
-      // Logic to send a message
+      try {
+        let payload = {
+          message: newMessage,
+          sender_id: 7,
+          receiver_id: 4,
+          chat_photos: [],
+          company_id: 3,
+          voice: null,
+        };
+
+        // Optimistically add the new message to the chat before the server response
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { ...payload, id: Date.now() }, // Using a temporary ID for now
+        ]);
+
+        const response = await fetch(
+          "https://backend.myhotel2cloud.com/api/chat",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        // Optional: Handle any errors from the server response
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Optionally, fetch updated messages if needed
+        fetchLatestMessages();
+      } catch (error) {
+        console.log("Error sending message:", error);
+        // Optional: Handle rollback if message fails to send
+      }
+
+      // Clear input after sending the message
       setNewMessage("");
     }
   };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchLatestMessages();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleRemovePreviewImage = (index) => {
     const updatedPreviewImages = previewImages.filter((_, i) => i !== index);
@@ -201,14 +114,15 @@ const ChatApp = () => {
       sx={{ height: "90vh", mt: 5, p: 0 }}
     >
       {/* Chat Messages Container */}
-      <div sx={{ flex: 1, overflowY: "auto", p: 2, minHeight: "50vh" }}>
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto", // Enable vertical scrolling when content overflows
+          padding: "16px", // Adjust padding
+        }}
+      >
         {messages.length === 0 ? (
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ minHeight: "inherit" }}
-          >
+          <Box display="flex" alignItems="center" justifyContent="center">
             <Typography>No messages yet</Typography>
           </Box>
         ) : (
@@ -218,7 +132,7 @@ const ChatApp = () => {
                 key={index}
                 display="flex"
                 justifyContent={
-                  message.sender_id === 1 ? "flex-end" : "flex-start"
+                  message.sender_id === 7 ? "flex-end" : "flex-start"
                 }
                 pb={1}
               >
@@ -246,7 +160,7 @@ const ChatApp = () => {
                     <Box
                       display="flex"
                       justifyContent={
-                        message.sender_id === 1 ? "flex-end" : "flex-start"
+                        message.sender_id === 7 ? "flex-end" : "flex-start"
                       }
                       gap={1}
                       my={1}
@@ -277,22 +191,22 @@ const ChatApp = () => {
                     <Typography
                       display={"flex"}
                       justifyContent={
-                        message.sender_id === 1 ? "flex-end" : "flex-start"
+                        message.sender_id === 7 ? "flex-end" : "flex-start"
                       }
                       variant="body2"
                       color="text.secondary"
                     >
-                      {message.message}dfssdfffffffffffffffffffffff
+                      {message.message}
                     </Typography>
                     <Typography
                       display={"flex"}
                       justifyContent={
-                        message.sender_id === 1 ? "flex-end" : "flex-start"
+                        message.sender_id === 7 ? "flex-end" : "flex-start"
                       }
                       variant="caption"
                       color="text.secondary"
                     >
-                      {message.created_at}
+                      {new Date(message.created_at).toLocaleTimeString()}
                     </Typography>
                   </Box>
                 </Box>
@@ -300,11 +214,18 @@ const ChatApp = () => {
             ))}
           </Box>
         )}
+
+        {/* Scroll to the bottom */}
+        <div ref={messagesEndRef} style={{ paddingBottom: "60px" }} />
       </div>
 
       {/* Input Field at Bottom */}
       <Box
-        sx={{ position: "sticky", bottom: 60, backgroundColor: "white", p: 2 }}
+        sx={{
+          position: "sticky",
+          bottom: 60,
+          backgroundColor: "white",
+        }}
       >
         {/* Image Previews */}
         {previewImages.length > 0 && (
@@ -334,7 +255,7 @@ const ChatApp = () => {
           </Box>
         )}
 
-        <Box display="flex" alignItems="center" gap={2}>
+        <Box display="flex" alignItems="center">
           <TextField
             variant="outlined"
             size="small"
@@ -344,11 +265,10 @@ const ChatApp = () => {
             placeholder="Type your message..."
             onKeyUp={(e) => e.key === "Enter" && handleSendMessage()}
           />
-          <Button
-            color="primary"
-            onClick={handleSendMessage}
-            startIcon={<Send />}
-          />
+          <Voice />
+          <IconButton onClick={handleSendMessage} color="primary">
+            <Send />
+          </IconButton>
         </Box>
       </Box>
     </Box>
