@@ -13,7 +13,7 @@ function RoomDetails() {
 
   return (
     <div>
-      <h1>Room Details</h1>
+      <h1>Room Details---------</h1>
       <p>Company ID: {companyId}</p>
       <p>Room ID: {roomId}</p>
       <p>Room Number: {roomNo}</p>
