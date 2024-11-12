@@ -168,7 +168,7 @@ function App({ id }) {
               />
               <CardContent style={{ padding: "8px" }}>
                 <Typography variant="body2" color="text.secondary">
-                  {item.title}
+                  {item.title} - {item.id}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">{item.price}</Typography>
               </CardContent>

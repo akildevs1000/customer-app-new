@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { ShoppingCart, Add, Remove } from "@mui/icons-material";
 
+import { useCart } from "./contexts/CartContext";
+
 const menuItems = [
   {
     description: `A delicious and spicy noodle dish with fresh vegetables and sauces.`,
@@ -51,18 +53,19 @@ const menuItems = [
   },
 ];
 
-
 function UserDetails() {
-  const [counter, setCounter] = useState(1);
-  const [price, setPrice] = useState(1500);
+  const { addToCart, cartItems, totalPrice } = useCart();
+
+  const [itemQty, setItemQty] = useState(1);
+  const [price, setPrice] = useState(0);
   const [totalItems, setTotalItems] = useState(0); // Total items in cart
 
-  // Function to handle incrementing the counter
+  // Function to handle incrementing the itemQty
   const multiplePrice = (itemPrice, action) => {
-    let currentCounter = action === "ADD" ? counter + 1 : counter - 1;
-    if (currentCounter > 0) {
-      setCounter(currentCounter);
-      setPrice(itemPrice * currentCounter); // Update the price based on the new counter
+    let itemQtyCounter = action === "ADD" ? itemQty + 1 : itemQty - 1;
+    if (itemQtyCounter > 0) {
+      setItemQty(itemQtyCounter);
+      setPrice(itemPrice * itemQtyCounter);
     }
   };
 
@@ -72,12 +75,25 @@ function UserDetails() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setItem(menuItems.find((e) => e.id === parseInt(id)));
+    let MyItem = menuItems.find((e) => e.id === parseInt(id));
+    setItem(MyItem);
+    setPrice(MyItem && MyItem.price);
+
     setLoading(false);
   }, [id]);
 
   const handleAddToCart = () => {
-    setTotalItems((prevTotal) => prevTotal + 1); // Add only one item at a time
+    const isItemInCart = cartItems.some(
+      (cartItem) => cartItem.id === item.id
+    );
+
+    if (!isItemInCart) {
+      addToCart({
+        item_qty: itemQty,
+        price_against_qty: price,
+        ...item,
+      });
+    }
   };
 
   if (loading) {
@@ -90,26 +106,6 @@ function UserDetails() {
 
   return (
     <div style={{ position: "relative" }}>
-      {/* Cart Icon with Badge */}
-      {/* <Box
-        sx={{
-          position: "absolute",
-          top: 20,
-          right: 20,
-        }}
-      >
-        <Badge
-          badgeContent={totalItems}
-          color="primary"
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-        >
-          <ShoppingCart style={{ fontSize: 30 }} />
-        </Badge>
-      </Box> */}
-
       <Card
         style={{
           background: "#fff",
@@ -120,128 +116,152 @@ function UserDetails() {
           marginTop: 30,
         }}
       >
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          style={{
-            background: "none",
-            padding: "15px",
-            borderRadius: "8px",
-          }}
-        >
-          <CardMedia
-            component="img"
-            image={item.image}
-            alt={item.title}
-            style={{
-              background: "none",
-              borderRadius: 8,
-              maxWidth: "100%",
-              maxHeight: 200,
-              objectFit: "contain",
-            }}
-          />
-        </Box>
+        {/* Check if item exists */}
+        {item ? (
+          <>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              style={{
+                background: "none",
+                padding: "15px",
+                borderRadius: "8px",
+              }}
+            >
+              <CardMedia
+                component="img"
+                image={item.image}
+                alt={item.title}
+                style={{
+                  background: "none",
+                  borderRadius: 8,
+                  maxWidth: "100%",
+                  maxHeight: 200,
+                  objectFit: "contain",
+                }}
+              />
+            </Box>
 
-        {/* Title, Price, and Add to Cart Button */}
-        <Box
-          style={{
-            marginTop: 50,
-          }}
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Typography variant="h6">{item.title}</Typography>
+            {/* Title, Price, and Add to Cart Button */}
+            <Box
+              style={{
+                marginTop: 50,
+              }}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography variant="h6">{item.title}</Typography>
+              <Box
+                variant="contained"
+                style={{
+                  color: "#fff",
+                  background: "#f96207",
+                  borderRadius: "50px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <IconButton
+                  style={{
+                    color: "#fff",
+                  }}
+                  onClick={() => multiplePrice(item.price, "MINUS")}
+                >
+                  <Remove style={{ fontSize: "14px" }} />
+                </IconButton>
+                <Typography variant="body1" style={{ margin: "0 3px" }}>
+                  {itemQty}
+                </Typography>
+                <IconButton
+                  style={{
+                    color: "#fff",
+                  }}
+                  onClick={() => multiplePrice(item.price, "ADD")}
+                >
+                  <Add style={{ fontSize: "14px" }} />
+                </IconButton>
+              </Box>
+            </Box>
+
+            <Box display="flex" justifyContent="space-between">
+              <Typography variant="body1" color="textSecondary">
+                {item.price}
+              </Typography>
+            </Box>
+
+            <Box style={{ marginTop: 25 }}>
+              <Typography variant="h6">Description</Typography>
+              <Typography
+                style={{ paddingTop: 10 }}
+                variant="body1"
+                color="textSecondary"
+              >
+                {item.description}
+              </Typography>
+            </Box>
+
+            {/* Cart Controls */}
+            <Box
+              display={"flex"}
+              flexWrap="wrap"
+              justifyContent="space-between"
+              gap={2}
+              alignItems="center"
+              sx={{
+                position: "fixed",
+                bottom: 60,
+                left: 5,
+                right: 5,
+                backgroundColor: "white",
+                p: 2,
+                zIndex: 10,
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                borderRadius: "12px",
+                border: "1px solid #e0e0e0",
+                mx: "10px",
+              }}
+            >
+              <Typography variant="h6">Total {totalPrice}</Typography>
+              <Button
+                variant="contained"
+                style={{
+                  background: "#f96207",
+                  borderRadius: "50px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onClick={handleAddToCart}
+              >
+                <ShoppingCart
+                  style={{ fontSize: "14px", marginRight: "8px" }}
+                />
+                <Typography variant="body1" style={{ margin: "0 3px" }}>
+                  Add To Cart
+                </Typography>
+              </Button>
+            </Box>
+          </>
+        ) : (
+          // Display the "Not Found" section if item is not found
           <Box
-            variant="contained"
             style={{
-              color:"#fff",
-              background: "#f96207",
-              borderRadius: "50px",
-              height: "30px",
               display: "flex",
-              alignItems: "center",
               justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              padding: "30px",
             }}
           >
-            <IconButton
-              style={{
-                color: "#fff",
-              }}
-              onClick={() => multiplePrice(item.price, "MINUS")}
-            >
-              <Remove style={{ fontSize: "14px" }} />
-            </IconButton>
-            <Typography variant="body1" style={{ margin: "0 3px" }}>
-              {counter}
+            <Typography variant="h6" color="textSecondary">
+              Item Not Found
             </Typography>
-            <IconButton
-              style={{
-                color: "#fff",
-              }}
-              onClick={() => multiplePrice(item.price, "ADD")}
-            >
-              <Add style={{ fontSize: "14px" }} />
-            </IconButton>
           </Box>
-        </Box>
-
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="body1" color="textSecondary">
-            {item.price}
-          </Typography>
-        </Box>
-
-        <Box style={{ marginTop: 25 }}>
-          <Typography variant="h6">Description</Typography>
-          <Typography style={{ paddingTop: 10 }} variant="body1" color="textSecondary">
-            {item.description}
-          </Typography>
-        </Box>
-
-
-        {/* Cart Controls */}
-        <Box
-          display={"flex"}
-          flexWrap="wrap"
-          justifyContent="space-between"
-          gap={2}
-          alignItems="center"
-          sx={{
-            position: "fixed",
-            bottom: 60,
-            left: 5,
-            right: 5,
-            backgroundColor: "white",
-            p: 2,
-            zIndex: 10,
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-            borderRadius: "12px",
-            border: "1px solid #e0e0e0",
-            mx: "10px",
-          }}
-        >
-          <Typography variant="h6">Total {price}</Typography>
-          <Button
-            variant="contained"
-            style={{
-              background: "#f96207",
-              borderRadius: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onClick={handleAddToCart}
-          >
-            <ShoppingCart style={{ fontSize: "14px", marginRight: "8px" }} />
-            <Typography variant="body1" style={{ margin: "0 3px" }}>
-              Add To Cart
-              {/* ({totalItems}) */}
-            </Typography>
-          </Button>
-        </Box>
+        )}
       </Card>
     </div>
   );
