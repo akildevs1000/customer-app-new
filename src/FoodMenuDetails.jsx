@@ -54,7 +54,7 @@ const menuItems = [
 function UserDetails() {
   const navigate = useNavigate();
 
-  const { addToCart, cartItems } = useCart();
+  const { addToCart, cartItems, updateCard } = useCart();
   const [itemQty, setItemQty] = useState(1);
   const [price, setPrice] = useState(0);
 
@@ -84,6 +84,12 @@ function UserDetails() {
     if (itemQtyCounter > 0) {
       setItemQty(itemQtyCounter);
       setPrice(itemPrice * itemQtyCounter);
+
+      updateCard({
+        ...item,
+        item_qty: itemQtyCounter,
+        price_against_qty: itemPrice * itemQtyCounter,
+      });
     }
   };
 
