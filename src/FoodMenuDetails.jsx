@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
   CardMedia,
   Box,
   Typography,
   Button,
-  CardContent,
   IconButton,
-  Badge,
 } from "@mui/material";
 import { ShoppingCart, Add, Remove } from "@mui/icons-material";
 
@@ -54,13 +52,33 @@ const menuItems = [
 ];
 
 function UserDetails() {
-  const { addToCart, cartItems, totalPrice } = useCart();
+  const navigate = useNavigate();
 
+  const { addToCart, cartItems } = useCart();
   const [itemQty, setItemQty] = useState(1);
   const [price, setPrice] = useState(0);
-  const [totalItems, setTotalItems] = useState(0); // Total items in cart
 
-  // Function to handle incrementing the itemQty
+  const { id } = useParams();
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let singleCartItem = cartItems.find((e) => e.id === parseInt(id));
+
+    if (singleCartItem) {
+      setItem(singleCartItem);
+      setPrice(singleCartItem.item_qty * singleCartItem.price);
+      setItemQty(singleCartItem.item_qty);
+      setLoading(false);
+      return;
+    }
+
+    let MyItem = menuItems.find((e) => e.id === parseInt(id));
+    setItem(MyItem);
+    setPrice(MyItem ? MyItem.price : 0);
+    setLoading(false);
+  }, [id]);
+
   const multiplePrice = (itemPrice, action) => {
     let itemQtyCounter = action === "ADD" ? itemQty + 1 : itemQty - 1;
     if (itemQtyCounter > 0) {
@@ -69,39 +87,20 @@ function UserDetails() {
     }
   };
 
-  const { id } = useParams();
-  const [item, setItem] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let MyItem = menuItems.find((e) => e.id === parseInt(id));
-    setItem(MyItem);
-    setPrice(MyItem && MyItem.price);
-
-    setLoading(false);
-  }, [id]);
-
   const handleAddToCart = () => {
-    const isItemInCart = cartItems.some(
-      (cartItem) => cartItem.id === item.id
-    );
-
+    const isItemInCart = cartItems.some((cartItem) => cartItem.id === item.id);
     if (!isItemInCart) {
       addToCart({
         item_qty: itemQty,
         price_against_qty: price,
         ...item,
       });
+      navigate("/food_menu");
     }
   };
 
   if (loading) {
     return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
   }
 
   return (
@@ -116,7 +115,6 @@ function UserDetails() {
           marginTop: 30,
         }}
       >
-        {/* Check if item exists */}
         {item ? (
           <>
             <Box
@@ -143,7 +141,6 @@ function UserDetails() {
               />
             </Box>
 
-            {/* Title, Price, and Add to Cart Button */}
             <Box
               style={{
                 marginTop: 50,
@@ -204,7 +201,6 @@ function UserDetails() {
               </Typography>
             </Box>
 
-            {/* Cart Controls */}
             <Box
               display={"flex"}
               flexWrap="wrap"
@@ -225,7 +221,7 @@ function UserDetails() {
                 mx: "10px",
               }}
             >
-              <Typography variant="h6">Total {totalPrice}</Typography>
+              <Typography variant="h6">Total {price}</Typography>
               <Button
                 variant="contained"
                 style={{
@@ -247,7 +243,6 @@ function UserDetails() {
             </Box>
           </>
         ) : (
-          // Display the "Not Found" section if item is not found
           <Box
             style={{
               display: "flex",
