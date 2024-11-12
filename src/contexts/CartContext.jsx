@@ -24,8 +24,27 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) => [...prevItems, item]); // Add item to the cart
   };
 
+  const removeCart = (item) => {
+    // Filter out the item to be removed
+    const updatedCartItems = cartItems.filter(
+      (cartItem) => cartItem.id !== item.id // assuming `id` uniquely identifies an item
+    );
+  
+    // Calculate the new total price
+    const newTotalPrice = updatedCartItems.reduce((acc, currentItem) => {
+      if (currentItem.price_against_qty && !isNaN(currentItem.price_against_qty)) {
+        return acc + currentItem.price_against_qty; // Sum up remaining items
+      }
+      return acc;
+    }, 0);
+  
+    // Update state
+    setCartItems(updatedCartItems);
+    setTotalPrice(newTotalPrice);
+  };
+  
   return (
-    <CartContext.Provider value={{ cartItems, addToCart,totalPrice }}>
+    <CartContext.Provider value={{ cartItems, addToCart,totalPrice,removeCart }}>
       {children}
     </CartContext.Provider>
   );

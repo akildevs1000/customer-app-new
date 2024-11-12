@@ -1,50 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import {
-  Typography,
-  Card,
-  CardMedia,
-  CardContent,
-  Box,
-  Button,
-} from "@mui/material";
+import { Typography, CardMedia, Box, Button, IconButton } from "@mui/material";
 import { ShoppingCart, Add, Remove, Delete } from "@mui/icons-material";
-
-const menuItems = [
-  {
-    description: `lorem`,
-    category_id: 1,
-    id: 1,
-    title: "Spicy Noodles",
-    price: "₹1,500.00",
-    image:
-      "https://img.freepik.com/premium-photo/circle-fruits-vegetables-with-clock-top_1274269-162495.jpg?w=740",
-  },
-  {
-    description: `lorem`,
-    category_id: 1,
-    id: 2,
-    title: "Shrimp Pasta",
-    price: "₹800.00",
-    image:
-      "https://img.freepik.com/premium-photo/circle-food-with-picture-circle-fruits-vegetables_1274269-165445.jpg",
-  },
-  {
-    description: `lorem`,
-    category_id: 1,
-    id: 3,
-    title: "Vegetable Curry",
-    price: "₹300.00",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtoqv3doDpDLZX7dhxdmFBomPiYCfjrxVNLiTlsC5uXbuLm3P17XTNgOENlVlKLQx9mdg&usqp=CAU",
-  },
-];
+import { useCart } from "./contexts/CartContext";
 
 function App() {
+  const { cartItems, totalPrice, removeCart } = useCart();
+  const [cartList, setCartList] = useState([]);
+
+  const handleRemoveToCart = (item) => {
+    removeCart(item);
+    setCartList(cartItems);
+  };
+
+  useEffect(() => {
+    setCartList(cartItems);
+  }, [cartItems]);
+
   return (
     <Box mt={7}>
-      {menuItems.map((item, index) => (
+      {cartList.map((item, index) => (
         <Box
           key={index}
           display="flex"
@@ -86,7 +62,6 @@ function App() {
               </Typography>
             </Box>
           </Box>
-
           {/* Quantity Button */}
           <Button
             variant="contained"
@@ -107,8 +82,11 @@ function App() {
             </Typography>
             <Add style={{ fontSize: "12px", marginLeft: "8px" }} />
           </Button>
+          <IconButton onClick={() => handleRemoveToCart(item)}>
+            <Delete style={{ color: "grey" }} />
+          </IconButton>
 
-          <Delete style={{ color: "grey" }} />
+          {/* <IconButton></IconButton> */}
         </Box>
       ))}
       <Box
@@ -134,7 +112,7 @@ function App() {
           alignItems="center"
         >
           <Typography variant="h6">Total Price</Typography>
-          <Typography variant="h6">₹5555.00</Typography>
+          <Typography variant="h6">{totalPrice}</Typography>
         </Box>
 
         <Box
