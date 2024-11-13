@@ -78,7 +78,7 @@ function App() {
           >
             <Remove style={{ fontSize: "12px", marginRight: "8px" }} />
             <Typography variant="body1" style={{ margin: "0 3px" }}>
-              1
+              {item.item_qty}
             </Typography>
             <Add style={{ fontSize: "12px", marginLeft: "8px" }} />
           </Button>
