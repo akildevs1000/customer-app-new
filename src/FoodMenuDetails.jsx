@@ -54,7 +54,7 @@ const menuItems = [
 function UserDetails() {
   const navigate = useNavigate();
 
-  const { addToCart, cartItems, updateCard } = useCart();
+  const { addToCart, cartItems, updateCart } = useCart();
   const [itemQty, setItemQty] = useState(1);
   const [price, setPrice] = useState(0);
 
@@ -85,7 +85,7 @@ function UserDetails() {
       setItemQty(itemQtyCounter);
       setPrice(itemPrice * itemQtyCounter);
 
-      updateCard({
+      updateCart({
         ...item,
         item_qty: itemQtyCounter,
         price_against_qty: itemPrice * itemQtyCounter,
