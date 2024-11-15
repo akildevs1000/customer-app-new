@@ -1,22 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
-import { Typography, CardMedia, Box, Button, IconButton } from "@mui/material";
+import { Typography, CardMedia, Box, IconButton, Button } from "@mui/material";
 import { ShoppingCart, Add, Remove, Delete } from "@mui/icons-material";
 import { useCart } from "./contexts/CartContext";
 
 function App() {
-  const { cartItems, totalPrice, removeCart } = useCart();
+  const { cartItems, totalPrice, removeCart } = useCart(); // Context functions
   const [cartList, setCartList] = useState([]);
-
-  const handleRemoveToCart = (item) => {
-    removeCart(item);
-    setCartList(cartItems);
-  };
 
   useEffect(() => {
     setCartList(cartItems);
   }, [cartItems]);
+
+  const handleRemoveToCart = (item) => {
+    removeCart(item);
+  };
+
+  const handleIncreaseQuantity = (item) => {
+    const updatedItems = cartList.map((cartItem) =>
+      cartItem.id === item.id ? { ...cartItem, item_qty: cartItem.item_qty + 1 } : cartItem
+    );
+    setCartList(updatedItems);
+  };
+
+  const handleDecreaseQuantity = (item) => {
+    if (item.item_qty > 1) {
+      const updatedItems = cartList.map((cartItem) =>
+        cartItem.id === item.id ? { ...cartItem, item_qty: cartItem.item_qty - 1 } : cartItem
+      );
+      setCartList(updatedItems);
+    }
+  };
 
   return (
     <Box mt={7}>
@@ -46,14 +59,12 @@ function App() {
               alt={item.title}
               style={{
                 borderRadius: 8,
-                maxWidth: 50, // Adjusts the image width
+                maxWidth: 50,
                 maxHeight: 50,
                 objectFit: "contain",
               }}
             />
             <Box display="flex" flexDirection="column">
-              {" "}
-              {/* Wraps title and price in a column */}
               <Typography variant="caption" color="textSecondary">
                 {item.title}
               </Typography>
@@ -62,31 +73,42 @@ function App() {
               </Typography>
             </Box>
           </Box>
-          {/* Quantity Button */}
-          <Button
-            variant="contained"
+          {/* Quantity Adjustment Buttons */}
+          <Box
+            display="flex"
+            alignItems="center"
             style={{
-              padding: "15px",
-              maxWidth: "55px",
+              padding: "8px",
+              maxWidth: "120px",
               background: "#f96207",
               borderRadius: "50px",
-              height: "22px",
+              height: "30px",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "space-between",
             }}
           >
-            <Remove style={{ fontSize: "12px", marginRight: "8px" }} />
-            <Typography variant="body1" style={{ margin: "0 3px" }}>
+            <IconButton
+              onClick={() => handleDecreaseQuantity(item)}
+              size="small"
+              style={{ color: "white" }}
+            >
+              <Remove style={{ fontSize: "12px" }} />
+            </IconButton>
+            <Typography variant="body1" style={{ color: "white", margin: "0 8px" }}>
               {item.item_qty}
             </Typography>
-            <Add style={{ fontSize: "12px", marginLeft: "8px" }} />
-          </Button>
+            <IconButton
+              onClick={() => handleIncreaseQuantity(item)}
+              size="small"
+              style={{ color: "white" }}
+            >
+              <Add style={{ fontSize: "12px" }} />
+            </IconButton>
+          </Box>
           <IconButton onClick={() => handleRemoveToCart(item)}>
             <Delete style={{ color: "grey" }} />
           </IconButton>
-
-          {/* <IconButton></IconButton> */}
         </Box>
       ))}
       <Box
@@ -97,33 +119,21 @@ function App() {
           right: 5,
           backgroundColor: "white",
           p: 2,
-          zIndex: 10, // Ensures it stays above other elements
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Adds a subtle shadow for depth
-          borderRadius: "12px", // Rounded corners for a box-like feel
-          border: "1px solid #e0e0e0", // Optional: Adds a light border for definition
-          mx: "10px", // Centers the box horizontally within the page
+          zIndex: 10,
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+          borderRadius: "12px",
+          border: "1px solid #e0e0e0",
+          mx: "10px",
         }}
       >
-        <Box
-          display={"flex"}
-          flexWrap="wrap"
-          justifyContent="space-between"
-          gap={2}
-          alignItems="center"
-        >
+        <Box display={"flex"} justifyContent="space-between" alignItems="center">
           <Typography variant="h6">Total Price</Typography>
-          <Typography variant="h6">{totalPrice}</Typography>
+          <Typography variant="h6">
+            {/* Calculate total price based on cartList */}
+            {cartList.reduce((total, item) => total + item.price * item.item_qty, 0)}
+          </Typography>
         </Box>
-
-        <Box
-          display={"flex"}
-          flexWrap="wrap"
-          justifyContent="space-between"
-          gap={2}
-          mt={2}
-          mb={2}
-          alignItems="center"
-        >
+        <Box display={"flex"} justifyContent="center" mt={2} mb={2} alignItems="center">
           <Button
             variant="contained"
             style={{
