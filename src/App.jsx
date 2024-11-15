@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import {
   BottomNavigation,
@@ -21,39 +21,59 @@ import { useNavigate } from "react-router-dom";
 import { ShoppingCart, ArrowBack } from "@mui/icons-material";
 import Chat from "./Chat";
 import Person from "./Person";
-import Parent from "./Parent";
+import Index from "./Index";
 import Home from "./Home";
 import FoodMenu from "./FoodMenu";
 import FoodMenuDetails from "./FoodMenuDetails";
 import Order from "./Order";
 import Cart from "./Cart";
 import CartBucket from "./CartBucket";
-import { CartProvider } from './contexts/CartContext'; // Named import
+import { CartProvider } from "./contexts/CartContext"; // Named import
 
 function App() {
   const navigate = useNavigate();
+  const [bookedRoomData, setBookedRoomData] = useState(null);
+
+  useEffect(() => {
+    // Function to fetch data from the API
+    const fetchData = async () => {
+      try {
+        let data = localStorage.getItem("bookedRoomData");
+
+        if (data) {
+          setBookedRoomData(JSON.parse(data));
+        }
+      } catch (err) {}
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures this runs on component mount (page load)
 
   return (
     <CartProvider>
       <Container>
         <AppBar position="static" color="transparent" elevation={0}>
-          <IconButton
-            color="primary"
-            style={{ position: "absolute", left: 16, top: 8 }}
-            onClick={() => navigate("/")}
-          >
-            <ArrowBack />
-          </IconButton>
+          {bookedRoomData ? (
+            <IconButton
+              color="primary"
+              style={{ position: "absolute", left: 16, top: 8 }}
+              onClick={() => navigate("/")}
+            >
+              <ArrowBack />
+            </IconButton>
+          ) : null}
+
           <Typography variant="h6" align="center">
             My App
           </Typography>
-          <CartBucket />
+          {bookedRoomData ? <CartBucket /> : null}
         </AppBar>
 
         <Routes>
           <Route path="/chat" element={<Chat />} />
           <Route path="/person" element={<Person />} />
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Index />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/food_menu" element={<FoodMenu />} />
           <Route path="/food-details/:id" element={<FoodMenuDetails />} />
           <Route path="/orders" element={<Order />} />
