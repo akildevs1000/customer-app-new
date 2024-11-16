@@ -23,6 +23,22 @@ function App() {
   const roomNo = query.get("room_no");
   const otp = query.get("otp");
 
+  if (!company_id || !roomId || !roomNo || !otp) {
+    return (
+      <Typography
+        height={'100vh'}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        variant="caption"
+        align="center"
+        color="textSecondary"
+      >
+        Some Paramters are missing
+      </Typography>
+    );
+  }
+
   const [loading, setLoading] = useState(false);
   const [bookedRoomData, setBookedRoomData] = useState(null);
   const [logo, setLogo] = useState(null);
@@ -115,7 +131,7 @@ function App() {
             align="center"
             color="textSecondary"
           >
-            No Details Found {bookedRoomData ? "A" : "B"}
+            No Details Found
           </Typography>
         ) : (
           <>

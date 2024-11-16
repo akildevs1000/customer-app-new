@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
   IconButton,
+  TextField,
 } from "@mui/material";
 import { ShoppingCart, Add, Remove } from "@mui/icons-material";
 
@@ -57,7 +58,7 @@ function UserDetails() {
   const { addToCart, cartItems, updateCart } = useCart();
   const [itemQty, setItemQty] = useState(1);
   const [price, setPrice] = useState(0);
-
+  const [comments, setComments] = useState("Write your comments");
   const { id } = useParams();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -87,6 +88,7 @@ function UserDetails() {
 
       updateCart({
         ...item,
+        comments,
         item_qty: itemQtyCounter,
         price_against_qty: itemPrice * itemQtyCounter,
       });
@@ -99,6 +101,7 @@ function UserDetails() {
       addToCart({
         item_qty: itemQty,
         price_against_qty: price,
+        comments,
         ...item,
       });
       navigate("/food_menu");
@@ -205,6 +208,24 @@ function UserDetails() {
               >
                 {item.description}
               </Typography>
+            </Box>
+
+            <Box style={{ marginTop: 30 }}>
+              {/* <Typography variant="h6">Comments</Typography> */}
+              <TextField
+                value={comments}
+                onChange={(e) => setComments(e.target.value)} // Ensure you have an onChange handler
+                label="Comments"
+                variant="outlined"
+                fullWidth
+                margin="dense" // Makes the input smaller vertically
+                InputProps={{
+                  style: {
+                    borderRadius: 5, // Makes the corners rounded
+                  },
+                }}
+                style={{ textAlign: "center" }}
+              />
             </Box>
 
             <Box

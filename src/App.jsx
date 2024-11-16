@@ -103,7 +103,7 @@ function App() {
             <BottomNavigationAction
               label="Home"
               icon={<HomeIcon />}
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/home")}
             />
             <BottomNavigationAction
               label="Menu"
