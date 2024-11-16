@@ -22,10 +22,16 @@ const CustomerProfile = ({ bookedRoomData }) => {
     <>
       {item ? (
         <Paper
-          elevation={2}
+          elevation={3}
           style={{ marginTop: "25px", padding: "20px", borderRadius: "10px" }}
         >
-          <Box display="flex" flexDirection="column" alignItems="center" mb={3}>
+          <Box
+            style={{ margin: "25px" }}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            mb={3}
+          >
             {item.customer.profile_picture ? (
               <Avatar
                 src={item.customer.profile_picture}
@@ -49,6 +55,9 @@ const CustomerProfile = ({ bookedRoomData }) => {
             }}
           >
             <TextField
+              InputProps={{
+                readOnly: true,
+              }}
               label="Full Name"
               placeholder="Full Name"
               fullWidth
@@ -60,6 +69,9 @@ const CustomerProfile = ({ bookedRoomData }) => {
             />
 
             <TextField
+              InputProps={{
+                readOnly: true,
+              }}
               label="Room Type"
               placeholder="Room Type"
               margin="normal"
@@ -70,6 +82,9 @@ const CustomerProfile = ({ bookedRoomData }) => {
             />
 
             <TextField
+              InputProps={{
+                readOnly: true,
+              }}
               label="Room No"
               placeholder="Room No"
               margin="normal"
@@ -80,6 +95,9 @@ const CustomerProfile = ({ bookedRoomData }) => {
             />
 
             <TextField
+              InputProps={{
+                readOnly: true,
+              }}
               label="Check-In"
               placeholder="Check-In"
               fullWidth
@@ -91,6 +109,9 @@ const CustomerProfile = ({ bookedRoomData }) => {
             />
 
             <TextField
+              InputProps={{
+                readOnly: true,
+              }}
               label="Expected Checkout"
               placeholder="Expected Checkout"
               fullWidth
@@ -102,6 +123,9 @@ const CustomerProfile = ({ bookedRoomData }) => {
             />
 
             <TextField
+              InputProps={{
+                readOnly: true,
+              }}
               label="Expected Checkout"
               placeholder="Expected Checkout"
               fullWidth
@@ -118,7 +142,7 @@ const CustomerProfile = ({ bookedRoomData }) => {
               fullWidth
               margin="normal"
               variant="outlined"
-              value={item.price || ""}
+              value={item.booking.balance || ""}
               size="small"
               style={{ flexBasis: "100%", margin: "2px 0" }}
             />
