@@ -115,7 +115,7 @@ function App() {
             align="center"
             color="textSecondary"
           >
-            No Details Found {bookedRoomData ? "A" : "B"}
+            No Details Found
           </Typography>
         ) : (
           <>
@@ -129,7 +129,7 @@ function App() {
             </Typography>
 
             <Typography variant="body1" align="center" color="black">
-              {userName}
+              {bookedRoomData && bookedRoomData?.customer?.full_name}
             </Typography>
 
             <Typography

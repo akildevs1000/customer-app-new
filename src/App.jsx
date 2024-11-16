@@ -71,7 +71,7 @@ function App() {
 
         <Routes>
           <Route path="/chat" element={<Chat />} />
-          <Route path="/person" element={<Person />} />
+          <Route path="/person" element={<Person bookedRoomData={bookedRoomData} />} />
           <Route path="/" element={<Index />} />
           <Route path="/home" element={<Home />} />
           <Route path="/food_menu" element={<FoodMenu />} />
@@ -103,7 +103,7 @@ function App() {
             <BottomNavigationAction
               label="Home"
               icon={<HomeIcon />}
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/Home")}
             />
             <BottomNavigationAction
               label="Menu"

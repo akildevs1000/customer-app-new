@@ -1,144 +1,152 @@
-import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import {
-  Card,
-  CardMedia,
-  Box,
+  Container,
   Typography,
+  Paper,
+  Avatar,
+  Box,
   TextField,
   Button,
 } from "@mui/material";
-import { ShoppingCart, Add, Remove } from "@mui/icons-material";
+import PersonIcon from "@mui/icons-material/Person";
 
-import { useCart } from "./contexts/CartContext";
+const CustomerProfile = ({ bookedRoomData }) => {
+  const [item, setItem] = useState(null);
 
-function UserDetails() {
-  const navigate = useNavigate();
-
-  const { addToCart, cartItems, updateCard } = useCart();
-
-  const { id } = useParams();
-  const [item, setItem] = useState({
-    description: `A delicious and spicy noodle dish with fresh vegetables and sauces.`,
-    category_id: 1,
-    id: 2,
-    title: "Shrimp Pasta",
-    price: 800,
-    image: "https://backend.myhotel2cloud.com/upload/1673109140.jpg",
-  });
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = () => {
-    const isItemInCart = cartItems.some((cartItem) => cartItem.id === item.id);
-    if (!isItemInCart) {
-      addToCart({
-        item_qty: itemQty,
-        price_against_qty: price,
-        ...item,
-      });
-      navigate("/food_menu");
-    }
-  };
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  // Mock user's name (replace with your dynamic data if needed)
-  const userName = "Francis";
+  // Ensure useEffect only runs once when component mounts
+  useEffect(() => {
+    setItem(bookedRoomData);
+  }, [bookedRoomData]);
 
   return (
-    <div style={{ position: "relative" }}>
-      <Card
-        style={{
-          background: "#fff",
-          marginBottom: 8,
-          display: "flex",
-          flexDirection: "column",
-          boxShadow: "none",
-          marginTop: 30,
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          style={{
-            background: "none",
-            padding: "15px",
-            borderRadius: "8px",
-          }}
+    <>
+      {item ? (
+        <Paper
+          elevation={2}
+          style={{ marginTop: "25px", padding: "20px", borderRadius: "10px" }}
         >
-          <CardMedia
-            component="img"
-            image={item.image}
-            alt={item.title}
+          <Box display="flex" flexDirection="column" alignItems="center" mb={3}>
+            {item.customer.profile_picture ? (
+              <Avatar
+                src={item.customer.profile_picture}
+                alt={item.customer.profile_picture}
+                sx={{ width: 150, height: 150, mb: 1 }}
+              />
+            ) : (
+              <Avatar
+                src="https://backend.mytime2cloud.com/media/employee/profile_picture/1731770691.jpg"
+                sx={{ width: 150, height: 150, mb: 1 }}
+              />
+            )}
+          </Box>
+
+          <div
             style={{
-              background: "none",
-              borderRadius: 8,
-              maxWidth: "100%",
-              maxHeight: 150,
-              objectFit: "contain",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "10px",
+              justifyContent: "space-between",
             }}
-          />
-        </Box>
-        {/* Add "Hello" text and user name */}
-        <Typography
-          style={{ marginTop: 30 }}
-          variant="caption"
-          align="center"
-          color="textSecondary"
-        >
-          Hello
-        </Typography>
-        <Typography variant="body1" align="center" color="black">
-          {userName}
-        </Typography>
+          >
+            <TextField
+              label="Full Name"
+              placeholder="Full Name"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={item.customer.full_name || ""}
+              size="small"
+              style={{ flexBasis: "100%", margin: "2px 0" }}
+            />
 
-        <Typography
-          variant="body2"
-          align="center"
-          color="textSecondary"
-          style={{ marginTop: 30 }}
-        >
-          Enter the WhatsApp OTP sent to your mobile number
-        </Typography>
+            <TextField
+              label="Room Type"
+              placeholder="Room Type"
+              margin="normal"
+              variant="outlined"
+              value={item.room_type || ""}
+              size="small"
+              style={{ flexBasis: "48%", margin: "2px 0" }}
+            />
 
-        <Box style={{ margin: "20px" }}>
-          <TextField
-            label="Enter OTP"
-            variant="outlined"
-            fullWidth
-            margin="dense" // Makes the input smaller vertically
-            InputProps={{
-              style: {
-                borderRadius: 5, // Makes the corners rounded
-                height: "50px", // Sets a specific height to make it smaller
-              },
+            <TextField
+              label="Room No"
+              placeholder="Room No"
+              margin="normal"
+              variant="outlined"
+              value={item.room_no || ""}
+              size="small"
+              style={{ flexBasis: "48%", margin: "2px 0" }}
+            />
+
+            <TextField
+              label="Check-In"
+              placeholder="Check-In"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={item.checkin_date_only || ""}
+              size="small"
+              style={{ flexBasis: "48%", margin: "2px 0" }}
+            />
+
+            <TextField
+              label="Expected Checkout"
+              placeholder="Expected Checkout"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={item.checkout_date_only || ""}
+              size="small"
+              style={{ flexBasis: "48%", margin: "2px 0" }}
+            />
+
+            <TextField
+              label="Expected Checkout"
+              placeholder="Expected Checkout"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={item.checkout_date_only || ""}
+              size="small"
+              style={{ flexBasis: "100%", margin: "2px 0" }}
+            />
+
+            <TextField
+              label="Balance To Pay"
+              placeholder="Balance To Pay"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              value={item.price || ""}
+              size="small"
+              style={{ flexBasis: "100%", margin: "2px 0" }}
+            />
+          </div>
+
+          <Button
+            variant="contained"
+            sx={{
+              marginTop: "20px",
+              background: "#f96207",
+              borderRadius: "50px",
+              padding: "10px 10px",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.15)",
             }}
-            style={{ textAlign: "center" }}
-          />
-        </Box>
-        <Button
-          style={{
-            background: "#f96207",
-            borderRadius: "50px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "0 50px",
-          }}
-        >
-          <Typography variant="body1" style={{ color: "#fff" }}>
-            Verify OTP
-          </Typography>
-        </Button>
-        <Typography variant="body1" align="center" color="red" marginTop={2}>
-          Resend
-        </Typography>
-      </Card>
-    </div>
+          >
+            <Typography variant="caption" sx={{ margin: "0 15px" }}>
+              Checkout
+            </Typography>
+          </Button>
+        </Paper>
+      ) : null}
+    </>
   );
-}
+};
 
-export default UserDetails;
+export default CustomerProfile;
